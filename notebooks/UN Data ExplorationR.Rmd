@@ -1,0 +1,82 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+1. Read in CSV, inspect first 10 rows.
+```{r}
+gdp_df = read_csv('../data/gdp_per_capita.csv')
+gdp_df |> 
+  head(10)
+```
+1(cont). Inspect last 10 rows.
+```{r}
+gdp_df |> 
+  tail(10)
+```
+2. Drop the 'Value Footnotes' column, and rename the remaining columns to 'Country', 'Year', and 'GDP_Per_Capita'.
+```{r}
+gdp_df = gdp_df |> 
+  select('Country or Area', Year, Value) |> 
+  rename(Country = 'Country or Area', GDP_Per_Capita = Value)
+gdp_df
+```
+3. Which years are represented in this dataset? 1990-2020.
+How many observations are there per year? Answered in yearcount table. 
+
+```{r}
+yearcount = gdp_df |> 
+  group_by(Year) |> 
+  count(name = 'count')
+```
+```{r}
+yearcount
+```
+3(cont). Make a plot to view the number of observations per year.
+
+```{r}
+yearcount |>
+ggplot(aes(x = Year, y = count)) +
+  geom_col()
+```
+4. How many countries are represented in this dataset? 242.
+```{r}
+gdp_df |> 
+summarize(n_distinct(Country))
+```
+4(cont). Which countries have the fewest observations? Djibouti & Somalia are tied for fewest observations, with 8 each.
+```{r}
+gdp_df |> 
+  group_by(Country) |> 
+  count() |>
+  arrange(n)
+```
+5. Create a new dataframe called 'gdp_2014' by subsetting `gdp_df` to just the year 2014.
+```{r}
+gdp_2014 = gdp_df |> 
+  filter(Year == 2014)
+```
+```{r}
+gdp_2014
+```
+6. Use summary() to find the summary statistics for GDP per capita in 2014.
+
+```{r}
+gdp_2014 |> 
+ summary()
+```
+7. Create a histogram of GDP Per Capita numbers for 2014 (you may wish to adjust the number of bins for your histogram).
+
+```{r}
+gdp_2014 |> 
+  ggplot(aes(x = GDP_Per_Capita)) +
+  geom_histogram()
+```
+
+
+
+
+
+
+
